@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crew Management Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --text-xs: clamp(0.75rem, 0.72rem + 0.2vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.82rem + 0.2vw, 1rem);
+      --text-base: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1.02rem + 0.5vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1vw, 2.1rem);
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --radius-sm: 0.5rem;
+      --radius-md: 0.9rem;
+      --radius-lg: 1.25rem;
+      --radius-xl: 1.5rem;
+      --radius-full: 999px;
+      --shadow-sm: 0 10px 25px rgba(13, 29, 34, 0.08);
+      --shadow-md: 0 18px 50px rgba(13, 29, 34, 0.12);
+      --font-body: 'Manrope', sans-serif;
+      --font-display: 'Manrope', sans-serif;
+    }
+
+    :root, [data-theme="light"] {
+      --color-bg: #f4f6f8;
+      --color-surface: #ffffff;
+      --color-surface-2: #f8fafb;
+      --color-surface-offset: #eef3f4;
+      --color-border: rgba(27, 44, 51, 0.12);
+      --color-divider: rgba(27, 44, 51, 0.08);
+      --color-text: #122027;
+      --color-text-muted: #5f6f77;
+      --color-text-faint: #8ea0a9;
+      --color-text-inverse: #f8fbfc;
+      --color-primary: #0e6b70;
+      --color-primary-hover: #0b575b;
+      --color-primary-highlight: #d8e8e8;
+      --color-success: #2f7a42;
+      --color-warning: #b76a17;
+      --color-error: #b03052;
+      --hero-grad: radial-gradient(circle at top left, rgba(14,107,112,0.18), transparent 36%), linear-gradient(135deg, #f6fbfb 0%, #edf4f4 100%);
+    }
+
+    [data-theme="dark"] {
+      --color-bg: #111618;
+      --color-surface: #182023;
+      --color-surface-2: #1d2629;
+      --color-surface-offset: #202a2d;
+      --color-border: rgba(229, 238, 241, 0.1);
+      --color-divider: rgba(229, 238, 241, 0.08);
+      --color-text: #edf5f6;
+      --color-text-muted: #a3b2b8;
+      --color-text-faint: #7d8b91;
+      --color-text-inverse: #0e1416;
+      --color-primary: #58a5ad;
+      --color-primary-hover: #7db8be;
+      --color-primary-highlight: rgba(88, 165, 173, 0.16);
+      --color-success: #76ba84;
+      --color-warning: #e7a455;
+      --color-error: #ee7b9b;
+      --hero-grad: radial-gradient(circle at top left, rgba(88,165,173,0.22), transparent 36%), linear-gradient(135deg, #182023 0%, #13181a 100%);
+      --shadow-sm: 0 10px 25px rgba(0, 0, 0, 0.22);
+      --shadow-md: 0 18px 50px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; border: none; }
+    a { color: inherit; text-decoration: none; }
+    img, svg { display: block; max-width: 100%; }
+    .hidden { display: none !important; }
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.02fr 1.18fr;
+      background: var(--color-bg);
+    }
+    .auth-panel {
+      padding: clamp(1.5rem, 3vw, 3rem);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      background: var(--hero-grad);
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-panel::after {
+      content: '';
+      position: absolute;
+      inset: auto -10% -18% auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(14, 107, 112, 0.08);
+      filter: blur(12px);
+    }
+    .auth-card {
+      width: min(100%, 520px);
+      background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      position: relative;
+      z-index: 1;
+      align-self: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-8);
+    }
+    .brand-mark {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 60%, white));
+      display: grid;
+      place-items: center;
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+    .brand-text strong {
+      display: block;
+      font-size: var(--text-sm);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+    .brand-text span {
+      font-size: var(--text-lg);
+      font-weight: 800;
+      color: var(--color-text);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-full);
+      background: var(--color-primary-highlight);
+      color: var(--color-primary);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-4);
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      line-height: 1.12;
+      margin-bottom: var(--space-3);
+    }
+    .auth-copy {
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-8);
+      max-width: 42ch;
+    }
+    .tab-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      padding: 0.35rem;
+      margin-bottom: var(--space-6);
+    }
+    .tab-btn {
+      min-height: 44px;
+      border-radius: var(--radius-full);
+      color: var(--color-text-muted);
+      font-weight: 700;
+      background: transparent;
+    }
+    .tab-btn.active {
+      background: var(--color-surface);
+      color: var(--color-text);
+      box-shadow: var(--shadow-sm);
+    }
+    form {
+      display: grid;
+      gap: var(--space-4);
+    }
+    .field-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr 1fr; }
+    .field {
+      display: grid;
+      gap: 0.45rem;
+    }
+    label {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    input, select {
+      min-height: 3.15rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-2);
+      color: var(--color-text);
+      padding: 0 1rem;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 18%, transparent);
+    }
+    .btn-primary, .btn-secondary {
+      min-height: 3.2rem;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      transition: 180ms ease;
+    }
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+    .helper-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+      margin-top: var(--space-2);
+    }
+    .message {
+      min-height: 1.5rem;
+      font-size: var(--text-sm);
+      font-weight: 700;
+    }
+    .message.error { color: var(--color-error); }
+    .message.success { color: var(--color-success); }
+    .showcase {
+      padding: clamp(1.5rem, 3vw, 3rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .showcase-inner {
+      width: min(100%, 640px);
+      display: grid;
+      gap: var(--space-6);
+    }
+    .showcase-panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-6);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+    }
+    .stat {
+      padding: var(--space-5);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-divider);
+    }
+    .stat span { font-size: var(--text-sm); color: var(--color-text-muted); display: block; margin-bottom: var(--space-2); }
+    .stat strong { font-size: clamp(1.5rem, 1.3rem + 1vw, 2.1rem); }
+    .mini-list {
+      display: grid;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+    .mini-item {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-divider);
+    }
+    .mini-item small { color: var(--color-text-muted); }
+    .dashboard {
+      min-height: 100vh;
+      display: none;
+      grid-template-columns: 280px 1fr;
+      background: var(--color-bg);
+    }
+    .dashboard.active { display: grid; }
+    .sidebar {
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-divider);
+      padding: var(--space-6);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: var(--space-6);
+    }
+    .profile-card, .side-card, .content-card, .hero-card, .metric-card, .table-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .profile-card, .side-card { padding: var(--space-5); }
+    .nav-list {
+      display: grid;
+      gap: var(--space-2);
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-md);
+      color: var(--color-text-muted);
+      font-weight: 700;
+    }
+    .nav-link.active { background: var(--color-primary-highlight); color: var(--color-primary); }
+    .main {
+      padding: clamp(1rem, 2vw, 2rem);
+      display: grid;
+      gap: var(--space-5);
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .icon-btn {
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 50%;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      display: grid;
+      place-items: center;
+    }
+    .hero-card {
+      padding: clamp(1.2rem, 2vw, 2rem);
+      background: var(--hero-grad);
+      display: grid;
+      grid-template-columns: 1.4fr 0.9fr;
+      gap: var(--space-5);
+    }
+    .hero-card p { color: var(--color-text-muted); margin: var(--space-3) 0 var(--space-6); }
+    .action-row { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+    }
+    .metric-card { padding: var(--space-5); }
+    .metric-card span { display: block; font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
+    .metric-card strong { font-size: clamp(1.4rem, 1.2rem + 0.8vw, 2rem); display: block; }
+    .metric-card small { color: var(--color-text-muted); }
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: var(--space-4);
+    }
+    .content-card, .table-card { padding: var(--space-5); }
+    .list {
+      display: grid;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding: 1rem;
+      background: var(--color-surface-2);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-divider);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.35rem 0.7rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 800;
+    }
+    .badge.safe { background: color-mix(in srgb, var(--color-success) 18%, transparent); color: var(--color-success); }
+    .badge.warn { background: color-mix(in srgb, var(--color-warning) 18%, transparent); color: var(--color-warning); }
+    .badge.alert { background: color-mix(in srgb, var(--color-error) 18%, transparent); color: var(--color-error); }
+    .roster-table {
+      width: 100%;
+      margin-top: var(--space-4);
+      border-collapse: collapse;
+    }
+    .roster-table th, .roster-table td {
+      text-align: left;
+      padding: 0.95rem 0.75rem;
+      border-bottom: 1px solid var(--color-divider);
+      font-size: var(--text-sm);
+    }
+    .roster-table th { color: var(--color-text-muted); font-weight: 700; }
+    .muted { color: var(--color-text-muted); }
+    .profile-name { font-weight: 800; font-size: var(--text-lg); }
+    .profile-role { color: var(--color-text-muted); font-size: var(--text-sm); }
+
+    @media (max-width: 1080px) {
+      .app-shell, .dashboard, .hero-card, .content-grid, .metric-grid { grid-template-columns: 1fr; }
+      .showcase { display: none; }
+      .sidebar { border-right: none; border-bottom: 1px solid var(--color-divider); }
+    }
+    @media (max-width: 640px) {
+      .field-grid, .stats-grid { grid-template-columns: 1fr; }
+      .topbar, .helper-row { flex-direction: column; align-items: stretch; }
+      .action-row, .top-actions { width: 100%; }
+      .action-row > *, .top-actions > *:not(.icon-btn) { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <section class="app-shell" id="authView">
+    <div class="auth-panel">
+      <div class="auth-card">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 13.5L21 4L14.2 20L11.1 13.9L3 13.5Z" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <strong>Airline Operations</strong>
+            <span>Crew Management Portal</span>
+          </div>
+        </div>
+
+        <div class="eyebrow">Secure access</div>
+        <h1>Sign up or log in before entering the operations dashboard.</h1>
+        <p class="auth-copy">The dashboard is hidden until a valid account signs in. New users can create credentials first, then log in to view crew schedules, compliance status, and duty management.</p>
+
+        <div class="tab-row" role="tablist" aria-label="Authentication tabs">
+          <button class="tab-btn active" id="signupTab" type="button">Sign Up</button>
+          <button class="tab-btn" id="loginTab" type="button">Login</button>
+        </div>
+
+        <form id="signupForm">
+          <div class="field-grid">
+            <div class="field">
+              <label for="signupName">Full name</label>
+              <input id="signupName" type="text" placeholder="Aarav Mehta" required>
+            </div>
+            <div class="field">
+              <label for="signupRole">Role</label>
+              <select id="signupRole" required>
+                <option value="">Select role</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Pilot">Pilot</option>
+                <option value="Cabin Crew">Cabin Crew</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="signupEmail">Email address</label>
+            <input id="signupEmail" type="email" placeholder="name@airline.com" required>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="signupPassword">Password</label>
+              <input id="signupPassword" type="password" placeholder="Minimum 6 characters" required>
+            </div>
+            <div class="field">
+              <label for="signupConfirm">Confirm password</label>
+              <input id="signupConfirm" type="password" placeholder="Re-enter password" required>
+            </div>
+          </div>
+          <button class="btn-primary" type="submit">Create account</button>
+        </form>
+
+        <form id="loginForm" class="hidden">
+          <div class="field">
+            <label for="loginEmail">Email address</label>
+            <input id="loginEmail" type="email" placeholder="name@airline.com" required>
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" placeholder="Enter your password" required>
+          </div>
+          <button class="btn-primary" type="submit">Login to dashboard</button>
+          <button class="btn-secondary" type="button" id="fillDemo">Use demo credentials</button>
+          <div class="helper-row">
+            <span>Demo admin: admin@airline.com / Admin123</span>
+          </div>
+        </form>
+
+        <p id="authMessage" class="message" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <aside class="showcase" aria-label="Preview information">
+      <div class="showcase-inner">
+        <div class="showcase-panel">
+          <div class="eyebrow">Platform overview</div>
+          <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-3);">Control rosters, duty limits, and crew readiness from one place.</h2>
+          <p class="muted">This preview explains what the user will see after successful login. The actual dashboard remains hidden until authentication is completed.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <span>Scheduled flights</span>
+            <strong>128</strong>
+          </div>
+          <div class="stat">
+            <span>Active crew today</span>
+            <strong>246</strong>
+          </div>
+          <div class="stat">
+            <span>Conflict alerts</span>
+            <strong>04</strong>
+          </div>
+          <div class="stat">
+            <span>Leave requests</span>
+            <strong>19</strong>
+          </div>
+        </div>
+
+        <div class="showcase-panel">
+          <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-2);">What opens after login</h3>
+          <div class="mini-list">
+            <div class="mini-item"><div><strong>Roster overview</strong><br><small>Monitor morning, afternoon, and red-eye crew blocks.</small></div><span class="badge safe">Ready</span></div>
+            <div class="mini-item"><div><strong>Compliance tracker</strong><br><small>Detect overlapping duties and rest-period violations.</small></div><span class="badge warn">Review</span></div>
+            <div class="mini-item"><div><strong>Duty-hour summary</strong><br><small>Track pilot and cabin crew utilization instantly.</small></div><span class="badge safe">Live</span></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="dashboard" id="dashboardView">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 13.5L21 4L14.2 20L11.1 13.9L3 13.5Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <strong>Airline Ops</strong>
+          <span>Crew Dashboard</span>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-name" id="profileName">Aarav Mehta</div>
+        <div class="profile-role" id="profileRole">Administrator</div>
+        <p class="muted" style="margin-top: var(--space-3);" id="profileEmail">admin@airline.com</p>
+      </div>
+
+      <nav class="nav-list" aria-label="Main navigation">
+        <a href="#" class="nav-link active">Dashboard Home</a>
+        <a href="#" class="nav-link">Roster Planning</a>
+        <a href="#" class="nav-link">Duty Hours</a>
+        <a href="#" class="nav-link">Leave Requests</a>
+        <a href="#" class="nav-link">Compliance Alerts</a>
+      </nav>
+
+      <div class="side-card">
+        <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-2);">Operations note</h3>
+        <p class="muted">Crew assignments are updated every 15 minutes based on flight movements and leave approvals.</p>
+      </div>
+
+      <button class="btn-secondary" id="logoutBtn" type="button">Logout</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">Home page</div>
+          <h1 style="margin: 0;">Welcome back, <span id="heroUserName">Crew Controller</span></h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle theme">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <path d="M12 1v2"></path><path d="M12 21v2"></path><path d="M4.22 4.22l1.42 1.42"></path><path d="M18.36 18.36l1.42 1.42"></path><path d="M1 12h2"></path><path d="M21 12h2"></path><path d="M4.22 19.78l1.42-1.42"></path><path d="M18.36 5.64l1.42-1.42"></path>
+            </svg>
+          </button>
+          <button class="btn-secondary" type="button">Export shifts</button>
+        </div>
+      </div>
+
+      <section class="hero-card">
+        <div>
+          <div class="eyebrow">Operations center</div>
+          <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-2);">Today’s crew scheduling is stable, with only a few conflicts needing review.</h2>
+          <p>Use the dashboard to assign crew, verify rest compliance, and respond quickly to leave requests before departure windows close.</p>
+          <div class="action-row">
+            <button class="btn-primary" type="button">Assign crew</button>
+            <button class="btn-secondary" type="button">Review conflicts</button>
+          </div>
+        </div>
+        <div class="content-card" style="padding: var(--space-5); align-self: stretch;">
+          <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4);">Shift readiness</h3>
+          <div class="mini-list">
+            <div class="mini-item"><div><strong>Morning sector</strong><br><small>42 crew allocated</small></div><span class="badge safe">98%</span></div>
+            <div class="mini-item"><div><strong>International long-haul</strong><br><small>2 rest gaps detected</small></div><span class="badge alert">Alert</span></div>
+            <div class="mini-item"><div><strong>Standby reserve</strong><br><small>8 crew available</small></div><span class="badge safe">Ready</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="metric-grid">
+        <div class="metric-card"><span>Total crew on duty</span><strong>246</strong><small>18 more than yesterday</small></div>
+        <div class="metric-card"><span>Duty hour average</span><strong>07h 40m</strong><small>Within approved range</small></div>
+        <div class="metric-card"><span>Pending leave requests</span><strong>19</strong><small>6 urgent reviews</small></div>
+        <div class="metric-card"><span>Conflict alerts</span><strong>04</strong><small>2 high priority cases</small></div>
+      </section>
+
+      <section class="content-grid">
+        <article class="content-card">
+          <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-2);">Roster activity</h3>
+          <p class="muted">Latest schedule movements across pilots and cabin crew.</p>
+          <div class="list">
+            <div class="list-item"><div><strong>Captain Neha Rao assigned to AI-672</strong><br><span class="muted">Hyderabad to Dubai · 06:20 departure</span></div><span class="badge safe">Assigned</span></div>
+            <div class="list-item"><div><strong>Cabin crew swap requested on AI-311</strong><br><span class="muted">Rest window overlap flagged for review</span></div><span class="badge warn">Pending</span></div>
+            <div class="list-item"><div><strong>Reserve pool activated for weather disruption</strong><br><span class="muted">3 standby crew moved to late evening block</span></div><span class="badge safe">Updated</span></div>
+          </div>
+        </article>
+
+        <aside class="content-card">
+          <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-2);">Compliance summary</h3>
+          <div class="mini-list">
+            <div class="mini-item"><div><strong>Rest-period warnings</strong><br><small>2 schedules below target buffer</small></div><span class="badge alert">Urgent</span></div>
+            <div class="mini-item"><div><strong>Max duty check</strong><br><small>All domestic crew within approved threshold</small></div><span class="badge safe">Pass</span></div>
+            <div class="mini-item"><div><strong>Medical validity</strong><br><small>1 pilot review due in 5 days</small></div><span class="badge warn">Monitor</span></div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="table-card">
+        <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-2);">Today’s assignment board</h3>
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>Flight</th>
+              <th>Crew Lead</th>
+              <th>Sector</th>
+              <th>Duty Window</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>AI-672</td>
+              <td>Capt. Neha Rao</td>
+              <td>HYD → DXB</td>
+              <td>04:50 - 11:40</td>
+              <td><span class="badge safe">Ready</span></td>
+            </tr>
+            <tr>
+              <td>AI-311</td>
+              <td>Ritika Sen</td>
+              <td>HYD → DEL</td>
+              <td>09:10 - 13:00</td>
+              <td><span class="badge warn">Review</span></td>
+            </tr>
+            <tr>
+              <td>AI-908</td>
+              <td>Capt. Arjun Das</td>
+              <td>HYD → SIN</td>
+              <td>18:20 - 02:10</td>
+              <td><span class="badge alert">Conflict</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </section>
+
+  <script>
+    const signupTab = document.getElementById('signupTab');
+    const loginTab = document.getElementById('loginTab');
+    const signupForm = document.getElementById('signupForm');
+    const loginForm = document.getElementById('loginForm');
+    const authMessage = document.getElementById('authMessage');
+    const authView = document.getElementById('authView');
+    const dashboardView = document.getElementById('dashboardView');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const fillDemo = document.getElementById('fillDemo');
+    const themeToggle = document.getElementById('themeToggle');
+
+    const users = [
+      { name: 'Admin Controller', email: 'admin@airline.com', role: 'Administrator', password: 'Admin123' },
+      { name: 'Crew Supervisor', email: 'crew@airline.com', role: 'Cabin Crew', password: 'Crew123' }
+    ];
+
+    let currentUser = null;
+    let currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+
+    function setMessage(text, type = '') {
+      authMessage.textContent = text;
+      authMessage.className = 'message' + (type ? ' ' + type : '');
+    }
+
+    function showSignup() {
+      signupForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+      signupTab.classList.add('active');
+      loginTab.classList.remove('active');
+      setMessage('');
+    }
+
+    function showLogin(message = '') {
+      loginForm.classList.remove('hidden');
+      signupForm.classList.add('hidden');
+      loginTab.classList.add('active');
+      signupTab.classList.remove('active');
+      setMessage(message, message ? 'success' : '');
+    }
+
+    function renderDashboard(user) {
+      document.getElementById('profileName').textContent = user.name;
+      document.getElementById('profileRole').textContent = user.role;
+      document.getElementById('profileEmail').textContent = user.email;
+      document.getElementById('heroUserName').textContent = user.name.split(' ')[0] || user.name;
+      authView.classList.add('hidden');
+      dashboardView.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function logout() {
+      currentUser = null;
+      dashboardView.classList.remove('active');
+      authView.classList.remove('hidden');
+      loginForm.reset();
+      signupForm.reset();
+      showLogin('Logged out successfully. Please log in again.');
+    }
+
+    signupTab.addEventListener('click', showSignup);
+    loginTab.addEventListener('click', () => showLogin());
+
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const role = document.getElementById('signupRole').value;
+      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+      const password = document.getElementById('signupPassword').value;
+      const confirm = document.getElementById('signupConfirm').value;
+
+      if (!name || !role || !email || !password || !confirm) {
+        setMessage('Please complete all sign-up fields.', 'error');
+        return;
+      }
+      if (password.length < 6) {
+        setMessage('Password must be at least 6 characters long.', 'error');
+        return;
+      }
+      if (password !== confirm) {
+        setMessage('Passwords do not match.', 'error');
+        return;
+      }
+      if (users.some(user => user.email === email)) {
+        setMessage('An account with this email already exists. Please log in instead.', 'error');
+        return;
+      }
+
+      users.push({ name, role, email, password });
+      signupForm.reset();
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = password;
+      showLogin('Account created successfully. Please log in to open the dashboard.');
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        setMessage('Enter both email and password.', 'error');
+        return;
+      }
+
+      const foundUser = users.find(user => user.email === email && user.password === password);
+      if (!foundUser) {
+        setMessage('Invalid login credentials. Please check your email and password.', 'error');
+        return;
+      }
+
+      currentUser = foundUser;
+      setMessage('');
+      renderDashboard(foundUser);
+    });
+
+    fillDemo.addEventListener('click', () => {
+      document.getElementById('loginEmail').value = 'admin@airline.com';
+      document.getElementById('loginPassword').value = 'Admin123';
+      setMessage('Demo credentials filled. Click login to continue.', 'success');
+    });
+
+    logoutBtn.addEventListener('click', logout);
+
+    themeToggle.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+    });
+
+    showSignup();
+  </script>
+</body>
+</html>
